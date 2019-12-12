@@ -1,6 +1,6 @@
-extern crate sorts;
+extern crate algos;
 
-use sorts::sorts::*;
+use algos::sorts::*;
 
 fn sort_test<F: Fn(&mut [T]), T: Sortable + std::fmt::Debug>(f: F, arr: &mut [T], expect: &[T]) {
 	f(arr);

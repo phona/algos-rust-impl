@@ -1,5 +1,5 @@
 [package]
-name = "sorts"
+name = "algos"
 version = "0.1.0"
 authors = ["phona <675428202@qq.com>"]
 edition = "2018"
