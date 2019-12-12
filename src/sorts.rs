@@ -117,15 +117,11 @@ fn partition<T: Sortable>(arr: &mut [T]) -> usize {
 		.unwrap();
 }
 
-fn _quick_sort<T: Sortable>(arr: &mut [T]) {
+pub fn quick_sort<T: Sortable>(arr: &mut [T]) {
 	let len = arr.len();
 	if len > 1 {
 		let pivot = partition(arr);
-		_quick_sort(&mut arr[0..pivot]);
-		_quick_sort(&mut arr[pivot + 1..len]);
+		quick_sort(&mut arr[0..pivot]);
+		quick_sort(&mut arr[pivot + 1..len]);
 	}
-}
-
-pub fn quick_sort<T: Sortable>(arr: &mut [T]) {
-	_quick_sort(arr);
 }
