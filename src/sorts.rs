@@ -1,11 +1,5 @@
-pub trait Sortable: PartialOrd + Copy {}
-impl<T: PartialOrd + Copy> Sortable for T {}
-
-fn exchange<T: Copy>(arr: &mut [T], i: usize, j: usize) {
-	let tmp = arr[i];
-	arr[i] = arr[j];
-	arr[j] = tmp;
-}
+pub trait Sortable: PartialOrd + Copy + std::fmt::Debug {}
+impl<T: PartialOrd + Copy + std::fmt::Debug> Sortable for T {}
 
 pub fn bubble_sort<T: Sortable>(arr: &mut [T]) {
 	if arr.len() == 0 {
@@ -16,7 +10,7 @@ pub fn bubble_sort<T: Sortable>(arr: &mut [T]) {
 	loop {
 		for i in 0..arr.len() - 1 {
 			if arr[i] > arr[i + 1] {
-				exchange(arr, i, i + 1);
+				arr.swap(i + 1, i);
 				counter += 1;
 			}
 		}
@@ -32,7 +26,7 @@ pub fn insert_sort<T: Sortable>(arr: &mut [T]) {
 	for i in 0..arr.len() {
 		for j in 0..i {
 			if arr[j] > arr[i] {
-				exchange(arr, i, j);
+				arr.swap(i, j);
 			}
 		}
 	}
@@ -42,13 +36,13 @@ pub fn select_sort<T: Sortable>(arr: &mut [T]) {
 	for i in 0..arr.len() {
 		for j in i..arr.len() {
 			if arr[i] > arr[j] {
-				exchange(arr, i, j);
+				arr.swap(i, j);
 			}
 		}
 	}
 }
 
-fn _merge_sort<T: Sortable + std::fmt::Debug>(arr: &mut [T], tmp_arr: &mut[T]) {
+fn _merge_sort<T: Sortable>(arr: &mut [T], tmp_arr: &mut [T]) {
 	let size = arr.len();
 	if size > 1 {
 		let mid = size / 2;
@@ -85,11 +79,52 @@ fn _merge_sort<T: Sortable + std::fmt::Debug>(arr: &mut [T], tmp_arr: &mut[T]) {
 	}
 }
 
-pub fn merge_sort<T: Sortable + std::fmt::Debug>(arr: &mut [T]) {
+pub fn merge_sort<T: Sortable>(arr: &mut [T]) {
 	// create temporary array for store partial sorted result
 	let mut tmp_arr = Vec::with_capacity(arr.len());
 	for i in 0..arr.len() {
 		tmp_arr.push(arr[i]);
 	}
 	_merge_sort(arr, &mut tmp_arr);
+}
+
+fn partition<T: Sortable>(arr: &mut [T]) -> usize {
+	let lo = 0;
+	let hi = arr.len() - 1;
+	let pivot = arr[hi];
+	let mut low_item_index = None;
+
+	// rearrage array
+	for i in lo..hi {
+		if arr[i] < pivot {
+			low_item_index = low_item_index
+				.and_then(|x| Some(x + 1))
+				.or_else(|| Some(lo));
+			low_item_index.map(|x| arr.swap(x, i));
+		}
+	}
+
+	return low_item_index
+		.and_then(|x| {
+			arr.swap(x + 1, hi);
+			Some(x + 1)
+		})
+		.or_else(|| {
+			arr.swap(lo, hi);
+			Some(lo)
+		})
+		.unwrap();
+}
+
+fn _quick_sort<T: Sortable>(arr: &mut [T]) {
+	let len = arr.len();
+	if len > 1 {
+		let pivot = partition(arr);
+		_quick_sort(&mut arr[0..pivot]);
+		_quick_sort(&mut arr[pivot + 1..len]);
+	}
+}
+
+pub fn quick_sort<T: Sortable>(arr: &mut [T]) {
+	_quick_sort(arr);
 }
