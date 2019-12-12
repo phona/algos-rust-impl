@@ -105,13 +105,11 @@ fn partition<T: Sortable>(arr: &mut [T]) -> usize {
 	}
 
 	return low_item_index
-		.and_then(|x| {
-			arr.swap(x + 1, hi);
-			Some(x + 1)
-		})
-		.or_else(|| {
-			arr.swap(lo, hi);
-			Some(lo)
+		.and_then(|x| Some(x + 1))
+		.or_else(|| Some(lo))
+		.map(|x| {
+			arr.swap(x, hi);
+			x
 		})
 		.unwrap();
 }
