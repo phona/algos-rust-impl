@@ -99,8 +99,11 @@ fn partition<T: Sortable>(arr: &mut [T]) -> usize {
 		if arr[i] < pivot {
 			low_item_index = low_item_index
 				.and_then(|x| Some(x + 1))
-				.or_else(|| Some(lo));
-			low_item_index.map(|x| arr.swap(x, i));
+				.or_else(|| Some(lo))
+				.map(|x| {
+					arr.swap(x, i);
+					x
+				});
 		}
 	}
 
