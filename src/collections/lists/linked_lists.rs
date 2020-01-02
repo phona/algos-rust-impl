@@ -19,7 +19,7 @@ pub struct Iter<'a, E> {
 }
 
 impl<'a, E> Iterator for Iter<'a, E> {
-	type Item = &'a Node<E>;
+	type Item = &'a E;
 
 	fn next(&mut self) -> Option<Self::Item> {
 		let node = self.node;
@@ -29,7 +29,7 @@ impl<'a, E> Iterator for Iter<'a, E> {
 			} else {
 				self.node = None;
 			}
-			Some(node)
+			Some(&node.value)
 		} else {
 			None
 		}
@@ -41,7 +41,7 @@ pub struct IterMut<'a, E> {
 }
 
 impl<'a, E> Iterator for IterMut<'a, E> {
-	type Item = &'a mut Node<E>;
+	type Item = &'a mut E;
 
 	fn next(&mut self) -> Option<Self::Item> {
 		let node = self.node.take();
@@ -49,7 +49,7 @@ impl<'a, E> Iterator for IterMut<'a, E> {
 			if let Some(next) = &mut current_node.next {
 				self.node = Some(next.borrow_mut());
 			}
-			Some(current_node)
+			Some(&mut current_node.value)
 		} else {
 			None
 		}
@@ -77,6 +77,16 @@ impl<E> LinkedList<E> {
 		};
 
 		Iter { node: head }
+	}
+
+	pub fn iter_mut(&mut self) -> IterMut<E> {
+		let head = if let Some(head) = &mut self.head {
+			Some(head.borrow_mut())
+		} else {
+			None
+		};
+
+		IterMut{ node: head }
 	}
 }
 
