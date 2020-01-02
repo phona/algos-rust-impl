@@ -2,7 +2,7 @@ use std::iter::Iterator;
 
 pub mod lists;
 
-pub trait Collection<E, Iter: Iterator> {
+trait Collection<E> {
 	fn size(&self) -> usize;
 
 	fn contains(&self, e: &E) -> bool;
@@ -10,10 +10,6 @@ pub trait Collection<E, Iter: Iterator> {
 	fn add(&self, e: E) -> bool;
 
 	fn remove(&self, e: &E) -> bool;
-
-	fn iter(&self) -> Iter;
-
-	fn iter_mut(&mut self) -> Iter;
 
 	fn is_empty(&self) -> bool {
 		self.size() == 0

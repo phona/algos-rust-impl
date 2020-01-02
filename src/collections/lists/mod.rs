@@ -1,5 +1,3 @@
-use super::Collection;
-
 pub mod linked_lists;
 
 pub trait List<'a, E, V> {
