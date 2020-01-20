@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Node<V> {
 	next: Option<Box<Node<V>>>,
 	value: V,
@@ -52,7 +52,7 @@ impl<'a, V> Iterator for IterMut<'a, V> {
 	}
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct LinkedList<V> {
 	size: usize,
 	head: Option<Box<Node<V>>>,
@@ -104,8 +104,12 @@ impl<V> LinkedList<V> {
 		}
 	}
 
-	pub fn size(&self) -> usize {
+	pub fn len(&self) -> usize {
 		self.size
+	}
+	
+	pub fn is_empty(&self) -> bool {
+		self.size == 0
 	}
 }
 
@@ -159,9 +163,27 @@ mod tests {
 		list.add(2);
 		list.add(3);
 
-		for i in list.iter() {
-			print!("{} -> ", &i)
+		assert_eq!(list.len(), 3);
+	}
+
+	#[test]
+	fn test_modify() {
+		let mut list = LinkedList::new();
+		list.add(1);
+		list.add(2);
+		list.add(3);
+
+		for i in list.iter_mut() {
+			if *i == 1 {
+				*i = 10;
+			}
 		}
-		print!("ground\n")
+
+		let mut other = LinkedList::new();
+		other.add(10);
+		other.add(2);
+		other.add(3);
+
+		assert_eq!(list, other);
 	}
 }
