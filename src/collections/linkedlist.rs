@@ -1,3 +1,5 @@
+use std::mem;
+
 #[derive(Debug, PartialEq)]
 pub struct Node<V> {
 	next: Option<Box<Node<V>>>,
@@ -21,7 +23,7 @@ impl<'a, V> Iterator for Iter<'a, V> {
 		let node = self.node;
 		if let Some(node) = node {
 			if let Some(next) = &node.next {
-				self.node = Some(&next);
+				self.node = Some(next);
 			} else {
 				self.node = None;
 			}
@@ -113,7 +115,26 @@ impl<V> LinkedList<V> {
 	}
 }
 
+impl<V: PartialEq + Copy> LinkedList<V> {
+	pub fn replace_all(&mut self, target: &V, value: V) {
+		for i in self.iter_mut() {
+			if *i == *target {
+				mem::replace(i, value);
+			}
+		}
+	}
+}
+
 impl<V: PartialEq> LinkedList<V> {
+	pub fn replace(&mut self, target: &V, value: V) {
+		for i in self.iter_mut() {
+			if *i == *target {
+				mem::replace(i, value);
+				return
+			}
+		}
+	}
+
 	pub fn contains(&self, v: &V) -> bool {
 		for i in self.iter() {
 			if *v == *i {
@@ -183,6 +204,38 @@ mod tests {
 		other.add(10);
 		other.add(2);
 		other.add(3);
+
+		assert_eq!(list, other);
+	}
+
+	#[test]
+	fn test_replace() {
+		let mut list = LinkedList::new();
+		list.add(1);
+		list.add(2);
+		list.add(3);
+		list.replace(&1, 10);
+
+		let mut other = LinkedList::new();
+		other.add(10);
+		other.add(2);
+		other.add(3);
+
+		assert_eq!(list, other);
+	}
+
+	#[test]
+	fn test_replace_all() {
+		let mut list = LinkedList::new();
+		for _ in 0..10 {
+			list.add(1);
+		}
+		list.replace_all(&1, 10);
+
+		let mut other = LinkedList::new();
+		for _ in 0..10 {
+			other.add(10);
+		}
 
 		assert_eq!(list, other);
 	}
